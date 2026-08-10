@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>유라의 하루루틴❣️</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Gowun Dodum', sans-serif; }
+  </style>
+</head>
+<body class="bg-emerald-50/60 text-slate-700 min-h-screen pb-12 relative overflow-x-hidden">
+  
+  <div class="max-w-md mx-auto p-3.5 space-y-3 relative z-10">
+    
+    <!-- 🌿 헤더 -->
+    <header class="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-emerald-100 flex justify-between items-center">
+      <div>
+        <h1 class="text-lg font-bold text-emerald-700 flex items-center gap-1.5">
+          유라의 하루루틴❣️
+        </h1>
+        <p id="current-date" class="text-[11px] text-emerald-600/70 mt-0.5"></p>
+      </div>
+      <div id="viewing-tag" class="text-[11px] bg-emerald-100 text-emerald-700 font-bold px-2.5 py-1 rounded-full">
+        오늘
+      </div>
+    </header>
+
+    <!-- 1️⃣ [순서 1] 오늘 마신 물 -->
+    <section class="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-emerald-100 shadow-sm relative overflow-hidden">
+      <!-- 배경 일러스트: 물 마시는 턱시도 고양이 💧 -->
+      <div class="absolute right-2 top-2 opacity-25 pointer-events-none">
+        <svg width="60" height="60" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="#a7f3d0"/>
+          <!-- 고양이 귀 -->
+          <polygon points="25,30 35,10 45,28" fill="#1e293b"/>
+          <polygon points="55,28 65,10 75,30" fill="#1e293b"/>
+          <!-- 고양이 얼굴 (턱시도 패턴) -->
+          <circle cx="50" cy="50" r="30" fill="#1e293b"/>
+          <path d="M50 35 L32 65 L68 65 Z" fill="#ffffff"/> <!-- 흰 마스크 -->
+          <!-- 눈 -->
+          <circle cx="42" cy="46" r="3" fill="#facc15"/>
+          <circle cx="58" cy="46" r="3" fill="#facc15"/>
+          <!-- 하트코 -->
+          <path d="M50 52 L48 50 L52 50 Z" fill="#f43f5e"/>
+          <!-- 컵 & 빨대 -->
+          <rect x="62" y="55" width="16" height="22" rx="3" fill="#38bdf8"/>
+          <line x1="68" y1="42" x2="68" y2="55" stroke="#0284c7" stroke-width="3"/>
+        </svg>
+      </div>
+
+      <div class="flex justify-between items-center mb-1.5 relative z-10">
+        <span class="font-bold text-xs text-emerald-800 flex items-center gap-1">💧 오늘 마신 물</span>
+        <span id="water-total" class="text-sm font-bold text-emerald-600">0 / 2000 mL</span>
+      </div>
+      <div class="w-full bg-emerald-100/60 rounded-full h-2.5 mb-2.5 overflow-hidden">
+        <div id="water-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <div class="flex gap-2 relative z-10" id="water-btns">
+        <button onclick="addWater(150)" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs py-1.5 rounded-xl font-bold border border-emerald-200 transition">+150mL</button>
+        <button onclick="addWater(800)" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs py-1.5 rounded-xl font-bold border border-emerald-200 transition">+800mL</button>
+        <button onclick="resetWater()" class="bg-red-50 text-red-400 text-xs px-2.5 py-1.5 rounded-xl font-medium border border-red-100">리셋</button>
+      </div>
+    </section>
+
+    <!-- 2️⃣ [순서 2] 오늘의 체크리스트 (시간별 1컬럼 단일배치 - 핸드폰 한화면용) -->
+    <section class="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-emerald-100 shadow-sm space-y-2">
+      <div class="flex justify-between items-center px-0.5">
+        <h2 id="checklist-title" class="text-xs font-bold text-emerald-900 flex items-center gap-1">
+          <span>🐾</span> 오늘의 체크리스트
+        </h2>
+        <span id="read-only-notice" class="text-[10px] text-amber-600 hidden font-bold">※ 지난 날짜는 보기 전용</span>
+      </div>
+      
+      <!-- 시간순 1컬럼 슬림 타임라인 목록 -->
+      <div id="routine-list" class="space-y-1.5"></div>
+    </section>
+
+    <!-- 3️⃣ [순서 3] 새 루틴 추가하기 -->
+    <details class="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-emerald-100 group">
+      <summary class="font-bold text-xs text-emerald-700 cursor-pointer list-none flex justify-between items-center">
+        <span class="flex items-center gap-1">➕ 새 루틴 추가하기</span>
+        <span class="group-open:rotate-180 transition-transform text-[10px]">▼</span>
+      </summary>
+      <form id="routine-form" class="mt-2.5 space-y-2 pt-2 border-t border-emerald-100">
+        <div class="flex gap-2">
+          <input type="text" id="icon" placeholder="아이콘(🎧)" value="📌" class="w-14 px-2 py-1 border border-emerald-200 rounded-lg text-center text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400">
+          <input type="text" id="title" placeholder="루틴 명칭" required class="flex-1 px-2.5 py-1 border border-emerald-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400">
+        </div>
+        <div class="flex gap-2">
+          <input type="time" id="time" required class="w-1/2 px-2.5 py-1 border border-emerald-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400">
+          <select id="day" class="w-1/2 px-2.5 py-1 border border-emerald-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400">
+            <option value="ALL">매일</option>
+            <option value="MON">월요일</option>
+            <option value="TUE">화요일</option>
+            <option value="WED">수요일</option>
+            <option value="THU">목요일</option>
+            <option value="FRI">금요일</option>
+            <option value="SAT">토요일</option>
+            <option value="SUN">일요일</option>
+          </select>
+        </div>
+        <div class="text-right">
+          <button type="submit" class="bg-emerald-600 text-white font-medium px-3 py-1 rounded-lg text-xs hover:bg-emerald-700 transition shadow-sm">
+            루틴 저장
+          </button>
+        </div>
+      </form>
+    </details>
+
+    <!-- 4️⃣ [순서 4] 기록 캘린더 & 분석 (달력 / 주간 / 월간) -->
+    <section class="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 shadow-sm border border-emerald-100 space-y-2.5 relative overflow-hidden">
+      <!-- 배경 일러스트: 독서 & 홈트하는 고양이들 📚🏋️‍♂️ -->
+      <div class="flex justify-between items-center border-b border-emerald-50 pb-2">
+        <h2 class="text-xs font-bold text-emerald-900">📅 기록 캘린더 & 분석</h2>
+        <div class="flex gap-1 text-[11px]">
+          <button id="tab-cal" onclick="switchTab('cal')" class="px-2 py-0.5 rounded-md font-bold bg-emerald-600 text-white">달력</button>
+          <button id="tab-week" onclick="switchTab('week')" class="px-2 py-0.5 rounded-md font-medium text-slate-400 hover:text-emerald-600">주간</button>
+          <button id="tab-month" onclick="switchTab('month')" class="px-2 py-0.5 rounded-md font-medium text-slate-400 hover:text-emerald-600">월간</button>
+        </div>
+      </div>
+
+      <!-- 달력 뷰 -->
+      <div id="view-calendar" class="space-y-1.5">
+        <div class="flex justify-between items-center px-1 text-xs font-bold text-slate-600">
+          <button onclick="changeMonth(-1)" class="p-0.5 hover:text-emerald-600">◀ 이전달</button>
+          <span id="cal-month-title" class="text-xs">2026년 8월</span>
+          <button onclick="changeMonth(1)" class="p-0.5 hover:text-emerald-600">다음달 ▶</button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400">
+          <span class="text-red-400">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="text-blue-400">토</span>
+        </div>
+        <div id="cal-days" class="grid grid-cols-7 gap-1 text-center text-xs"></div>
+        <div class="text-right pt-0.5">
+          <button onclick="selectDate(getKSTToday())" class="text-[10px] text-emerald-600 font-bold underline">오늘 날짜로 돌아오기</button>
+        </div>
+      </div>
+
+      <!-- 루틴별 원형 그래프 통계 뷰 -->
+      <div id="view-stats" class="hidden space-y-2">
+        <p id="stats-title-desc" class="text-[11px] text-slate-400 font-medium"></p>
+        <div id="routine-circles-list" class="grid grid-cols-2 gap-2"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const defaultRoutines = [
+      { id: 1, icon: '🎧', title: '오디오북 (출근길)', time: '07:30', day: 'ALL' },
+      { id: 2, icon: '🚌', title: '출근', time: '08:00', day: 'ALL' },
+      { id: 3, icon: '🥚', title: '달걀&아몬드브리즈', time: '08:30', day: 'ALL' },
+      { id: 4, icon: '📖', title: '독서 (오전)', time: '10:30', day: 'ALL' },
+      { id: 5, icon: '📖', title: '독서 (점심)', time: '12:50', day: 'ALL' },
+      { id: 6, icon: '📖', title: '독서 (오후)', time: '15:30', day: 'ALL' },
+      { id: 7, icon: '🥜', title: '하루견과/간식', time: '16:30', day: 'ALL' },
+      { id: 8, icon: '🏃‍♀️', title: '홈트레이닝', time: '18:00', day: 'ALL' },
+      { id: 9, icon: '🎬', title: '콘텐츠 만들기', time: '18:50', day: 'ALL' }
+    ];
+
+    function getKSTToday() {
+      const now = new Date();
+      const kstOffset = 9 * 60;
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const kstDate = new Date(utc + (kstOffset * 60000));
+      return kstDate.toISOString().split('T')[0];
+    }
+
+    let todayKey = getKSTToday();
+    let selectedDateKey = todayKey;
+    let calYearMonth = new Date(todayKey);
+
+    let routines = JSON.parse(localStorage.getItem('my_routines_v5')) || defaultRoutines;
+    let records = JSON.parse(localStorage.getItem('my_routine_records_v5')) || {}; 
+    let waterLog = JSON.parse(localStorage.getItem('my_water_log_v5')) || {};
+
+    if (!records[todayKey]) records[todayKey] = [];
+    if (!waterLog[todayKey]) waterLog[todayKey] = 0;
+
+    // 자정 체크 및 날짜 변경
+    function checkMidnightReset() {
+      const currentKST = getKSTToday();
+      if (currentKST !== todayKey) {
+        todayKey = currentKST;
+        selectedDateKey = todayKey;
+        if (!records[todayKey]) records[todayKey] = [];
+        if (!waterLog[todayKey]) waterLog[todayKey] = 0;
+        saveAndRender();
+      }
+    }
+    setInterval(checkMidnightReset, 10000);
+
+    function addWater(amount) {
+      if (selectedDateKey !== todayKey) return;
+      waterLog[todayKey] = (waterLog[todayKey] || 0) + amount;
+      saveAndRender();
+    }
+    function resetWater() {
+      if (selectedDateKey !== todayKey) return;
+      waterLog[todayKey] = 0;
+      saveAndRender();
+    }
+
+    function toggleComplete(id) {
+      if (selectedDateKey !== todayKey) return;
+      const idx = (records[todayKey] || []).indexOf(id);
+      if (idx > -1) records[todayKey].splice(idx, 1);
+      else records[todayKey].push(id);
+      saveAndRender();
+    }
+
+    function deleteRoutine(e, id) {
+      e.stopPropagation();
+      routines = routines.filter(r => r.id !== id);
+      saveAndRender();
+    }
+
+    document.getElementById('routine-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newR = {
+        id: Date.now(),
+        icon: document.getElementById('icon').value || '📌',
+        title: document.getElementById('title').value,
+        time: document.getElementById('time').value,
+        day: document.getElementById('day').value
+      };
+      routines.push(newR);
+      saveAndRender();
+      e.target.reset();
+      document.getElementById('icon').value = '📌';
+    });
+
+    let currentTab = 'cal';
+    function switchTab(tab) {
+      currentTab = tab;
+      ['cal', 'week', 'month'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tab) btn.className = "px-2 py-0.5 rounded-md font-bold bg-emerald-600 text-white";
+        else btn.className = "px-2 py-0.5 rounded-md font-medium text-slate-400 hover:text-emerald-600";
+      });
+
+      if (tab === 'cal') {
+        document.getElementById('view-calendar').classList.remove('hidden');
+        document.getElementById('view-stats').classList.add('hidden');
+      } else {
+        document.getElementById('view-calendar').classList.add('hidden');
+        document.getElementById('view-stats').classList.remove('hidden');
+        renderCircleStats(tab);
+      }
+    }
+
+    function changeMonth(offset) {
+      calYearMonth.setMonth(calYearMonth.getMonth() + offset);
+      renderCalendar();
+    }
+
+    function selectDate(dateStr) {
+      selectedDateKey = dateStr;
+      render();
+    }
+
+    function renderCalendar() {
+      const year = calYearMonth.getFullYear();
+      const month = calYearMonth.getMonth();
+      document.getElementById('cal-month-title').innerText = `${year}년 ${month + 1}월`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      const calDaysEl = document.getElementById('cal-days');
+      calDaysEl.innerHTML = '';
+
+      for (let i = 0; i < firstDay; i++) {
+        calDaysEl.appendChild(document.createElement('div'));
+      }
+
+      for (let d = 1; d <= lastDate; d++) {
+        const dStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const dayBtn = document.createElement('button');
+        dayBtn.onclick = () => selectDate(dStr);
+
+        const isSelected = dStr === selectedDateKey;
+        const isToday = dStr === todayKey;
+        const hasRecord = (records[dStr] && records[dStr].length > 0);
+
+        dayBtn.className = `p-1 rounded-lg flex flex-col items-center justify-center transition ${
+          isSelected ? 'bg-emerald-600 text-white font-bold' :
+          isToday ? 'bg-emerald-100 text-emerald-800 font-bold' : 'hover:bg-emerald-50 text-slate-700'
+        }`;
+
+        dayBtn.innerHTML = `
+          <span>${d}</span>
+          <span class="text-[7px] h-1.5 leading-none">${hasRecord ? '🐾' : ''}</span>
+        `;
+        calDaysEl.appendChild(dayBtn);
+      }
+    }
+
+    function renderCircleStats(type) {
+      const listEl = document.getElementById('routine-circles-list');
+      listEl.innerHTML = '';
+
+      let datesList = [];
+      if (type === 'week') {
+        document.getElementById('stats-title-desc').innerText = "📌 이번 주 (월~일) 루틴 달성률";
+        const now = new Date(todayKey);
+        const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+        const monday = new Date(now);
+        monday.setDate(now.getDate() - (dayOfWeek - 1));
+
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(monday);
+          d.setDate(monday.getDate() + i);
+          datesList.push(d.toISOString().split('T')[0]);
+        }
+      } else {
+        document.getElementById('stats-title-desc').innerText = "📌 최근 30일 루틴 달성률";
+        for (let i = 0; i < 30; i++) {
+          const d = new Date(todayKey);
+          d.setDate(d.getDate() - i);
+          datesList.push(d.toISOString().split('T')[0]);
+        }
+      }
+
+      routines.forEach(r => {
+        let totalApplicableDays = datesList.length;
+        let doneCount = 0;
+
+        datesList.forEach(dStr => {
+          if (records[dStr] && records[dStr].includes(r.id)) doneCount++;
+        });
+
+        const rate = Math.round((doneCount / totalApplicableDays) * 100);
+
+        const item = document.createElement('div');
+        item.className = "bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100 flex flex-col items-center text-center";
+        
+        item.innerHTML = `
+          <div class="relative w-12 h-12 flex items-center justify-center mb-1">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path class="text-emerald-100" stroke-width="4" stroke="currentColor" fill="none"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="text-emerald-500" stroke-width="4" stroke-dasharray="${rate}, 100" stroke-linecap="round" stroke="currentColor" fill="none"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <span class="absolute text-[10px] font-bold text-emerald-700">${rate}%</span>
+          </div>
+          <p class="font-medium text-xs text-slate-800 truncate w-full">${r.icon} ${r.title}</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">${doneCount} / ${totalApplicableDays}회</p>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function saveAndRender() {
+      localStorage.setItem('my_routines_v5', JSON.stringify(routines));
+      localStorage.setItem('my_routine_records_v5', JSON.stringify(records));
+      localStorage.setItem('my_water_log_v5', JSON.stringify(waterLog));
+      render();
+    }
+
+    function render() {
+      const isTodayView = (selectedDateKey === todayKey);
+      document.getElementById('current-date').innerText = new Date(selectedDateKey).toLocaleDateString('ko-KR', {
+        year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+      });
+
+      const viewingTag = document.getElementById('viewing-tag');
+      const readOnlyNotice = document.getElementById('read-only-notice');
+      const waterBtns = document.getElementById('water-btns');
+
+      if (isTodayView) {
+        viewingTag.innerText = "오늘";
+        viewingTag.className = "text-[11px] bg-emerald-100 text-emerald-700 font-bold px-2.5 py-1 rounded-full";
+        readOnlyNotice.classList.add('hidden');
+        waterBtns.classList.remove('opacity-40', 'pointer-events-none');
+        document.getElementById('checklist-title').innerText = "🐾 오늘의 체크리스트";
+      } else {
+        viewingTag.innerText = `${selectedDateKey}`;
+        viewingTag.className = "text-[11px] bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-full";
+        readOnlyNotice.classList.remove('hidden');
+        waterBtns.classList.add('opacity-40', 'pointer-events-none');
+        document.getElementById('checklist-title').innerText = `🐾 ${selectedDateKey} 기록`;
+      }
+
+      // 수분 섭취
+      const waterAmount = waterLog[selectedDateKey] || 0;
+      document.getElementById('water-total').innerText = `${waterAmount} / 2000 mL`;
+      document.getElementById('water-bar').style.width = `${Math.min((waterAmount / 2000) * 100, 100)}%`;
+
+      renderCalendar();
+
+      // 체크리스트 (시간순 1컬럼 단일 리스트)
+      const daysStr = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+      const selDayStr = daysStr[new Date(selectedDateKey).getDay()];
+
+      const filteredRoutines = routines
+        .filter(r => r.day === 'ALL' || r.day === selDayStr)
+        .sort((a, b) => a.time.localeCompare(b.time));
+
+      const listEl = document.getElementById('routine-list');
+      listEl.innerHTML = '';
+
+      filteredRoutines.forEach(r => {
+        const isDone = (records[selectedDateKey] || []).includes(r.id);
+
+        const card = document.createElement('div');
+        if (isTodayView) {
+          card.onclick = () => toggleComplete(r.id);
+        }
+        card.className = `px-3 py-2 rounded-xl border flex items-center justify-between transition-all ${
+          isTodayView ? 'cursor-pointer hover:border-emerald-300' : 'cursor-default'
+        } ${isDone ? 'bg-emerald-50/50 border-emerald-100 opacity-60' : 'bg-white border-emerald-100 shadow-sm'}`;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <input type="checkbox" ${isDone ? 'checked' : ''} ${!isTodayView ? 'disabled' : ''}
+                   class="w-4 h-4 accent-emerald-600 rounded cursor-pointer pointer-events-none flex-shrink-0">
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">⏰ ${r.time}</span>
+            <p class="font-medium text-xs text-slate-800 ${isDone ? 'line-through text-slate-400' : ''}">
+              <span>${r.icon}</span> ${r.title}
+            </p>
+          </div>
+          ${isTodayView ? `<button onclick="deleteRoutine(event, ${r.id})" class="text-[10px] text-red-300 hover:text-red-500 px-1">✕</button>` : ''}
+        `;
+        listEl.appendChild(card);
+      });
+
+      if (currentTab !== 'cal') {
+        renderCircleStats(currentTab);
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
