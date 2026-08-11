@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>유라의 하루루틴❣️</title>
+
+  <!-- 🐱 보내주신 턱시도 고양이 앱 아이콘 설정 -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23ffffff'/><path d='M25 20 C18 35 15 55 20 70 C30 90 70 90 80 70 C85 55 82 35 75 20 L62 33 C58 31 54 30 50 30 C46 30 42 31 38 33 Z' fill='%23231f20'/><path d='M50 30 C52 45 61 58 80 70 C70 90 30 90 20 70 C39 58 48 45 50 30 Z' fill='%23ffffff'/><path d='M30 60 Q38 53 45 60' fill='none' stroke='%23231f20' stroke-width='4' stroke-linecap='round'/><path d='M55 60 Q62 53 70 60' fill='none' stroke='%23231f20' stroke-width='4' stroke-linecap='round'/><ellipse cx='50' cy='66' rx='4.5' ry='3.5' fill='%23231f20'/><path d='M50 68 L50 73 C45 77 41 73 41 73 M50 73 C55 77 59 73 59 73' fill='none' stroke='%23231f20' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Gowun Dodum', sans-serif; }
+  </style>
+</head>
+<body class="bg-emerald-50/60 text-slate-700 min-h-screen pb-16 relative overflow-x-hidden text-sm">
+
+  <div class="max-w-md mx-auto p-3.5 space-y-3.5 relative z-10">
+    
+    <!-- 🌿 헤더 -->
+    <header class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-emerald-100 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold text-emerald-700 flex items-center gap-1.5">
+          유라의 하루루틴❣️
+        </h1>
+        <p id="current-date" class="text-xs text-emerald-600/70 mt-0.5 font-medium"></p>
+      </div>
+      <div id="viewing-tag" class="text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full">
+        오늘
+      </div>
+    </header>
+
+    <!-- 🔥 연속 달성 응원 카드 -->
+    <section class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-3.5 shadow-sm flex justify-between items-center">
+      <div>
+        <p class="text-xs opacity-90 font-medium">오늘도 파이팅이에요! 🐾</p>
+        <p id="streak-text" class="text-base font-extrabold mt-0.5">🔥 연속 루틴 달성 중!</p>
+      </div>
+      <div class="text-right">
+        <span id="today-completion-rate" class="text-2xl font-black bg-white/20 px-2.5 py-1 rounded-xl">0%</span>
+      </div>
+    </section>
+
+    <!-- 1️⃣ 오늘 마신 물 -->
+    <section class="bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-emerald-100 shadow-sm relative overflow-hidden">
+      <div class="flex justify-between items-center mb-2 relative z-10">
+        <span class="font-bold text-sm text-emerald-800 flex items-center gap-1">💧 마신 물</span>
+        <div class="flex items-center gap-1">
+          <span id="water-total" class="text-base font-bold text-emerald-600">0 / 2000 mL</span>
+          <button onclick="changeWaterGoal()" class="text-xs text-slate-400 hover:text-emerald-600 p-0.5" title="목표량 변경">✏️</button>
+        </div>
+      </div>
+      <div class="w-full bg-emerald-100/60 rounded-full h-3 mb-3 overflow-hidden">
+        <div id="water-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <div class="flex gap-2 relative z-10" id="water-btns">
+        <button onclick="addWater(150)" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs py-2 rounded-xl font-bold border border-emerald-200 transition">+150mL</button>
+        <button onclick="addWater(800)" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs py-2 rounded-xl font-bold border border-emerald-200 transition">+800mL</button>
+        <button onclick="resetWater()" class="bg-red-50 text-red-400 text-xs px-3 py-2 rounded-xl font-medium border border-red-100">리셋</button>
+      </div>
+    </section>
+
+    <!-- 2️⃣ 오늘의 체크리스트 & 새 루틴 추가 ➕ 버튼 -->
+    <section class="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-emerald-100 shadow-sm space-y-3">
+      <div class="flex justify-between items-center px-0.5">
+        <div class="flex items-center gap-2">
+          <h2 id="checklist-title" class="text-sm font-bold text-emerald-900 flex items-center gap-1">
+            <span>🐾</span> 오늘의 체크리스트
+          </h2>
+          <button onclick="toggleAddForm()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center transition shadow-2xs" title="새 루틴 추가">
+            ➕
+          </button>
+        </div>
+        <button id="unlock-btn" onclick="togglePastUnlock()" class="hidden text-xs font-bold px-2.5 py-1 rounded-lg border transition">
+          🔒 수정 잠금
+        </button>
+      </div>
+
+      <!-- ➕ 새 루틴 추가 폼 -->
+      <div id="new-routine-box" class="hidden bg-emerald-50/60 p-3 rounded-xl border border-emerald-200 space-y-3">
+        <div class="flex justify-between items-center">
+          <h3 class="font-bold text-xs text-emerald-900">✨ 새 루틴 작성하기</h3>
+          <button onclick="toggleAddForm()" class="text-xs text-slate-400 hover:text-slate-600 font-bold">닫기 ✕</button>
+        </div>
+        <form id="routine-form" class="space-y-3">
+          <div class="flex gap-2">
+            <input type="text" id="icon" placeholder="아이콘" value="📌" class="w-12 px-2 py-1.5 border border-emerald-200 rounded-lg text-center text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400">
+            <input type="text" id="title" placeholder="루틴 명칭" required class="flex-1 px-3 py-1.5 border border-emerald-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400 w-full min-w-0">
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-emerald-800 w-12">시간</span>
+            <input type="time" id="time" required class="flex-1 px-3 py-1.5 border border-emerald-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400">
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-emerald-800">반복 방식</span>
+              <button type="button" onclick="selectAllDays('add')" class="text-xs text-emerald-600 font-bold underline">매일 선택</button>
+            </div>
+
+            <div class="mb-2">
+              <select id="weekly-freq-add" onchange="handleFreqChange('add')" class="w-full px-2.5 py-1.5 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-800 focus:outline-none">
+                <option value="FIXED">지정한 요일에 수행 (기본)</option>
+                <option value="1">주 1회 (요일 상관없이 랜덤)</option>
+                <option value="2">주 2회 (요일 상관없이 랜덤)</option>
+                <option value="3">주 3회 (요일 상관없이 랜덤)</option>
+                <option value="4">주 4회 (요일 상관없이 랜덤)</option>
+                <option value="5">주 5회 (요일 상관없이 랜덤)</option>
+                <option value="6">주 6회 (요일 상관없이 랜덤)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-7 gap-1 text-center" id="day-checkboxes-add">
+              <label class="cursor-pointer"><input type="checkbox" value="SUN" class="day-check-add hidden peer"><span class="block py-1.5 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">일</span></label>
+              <label class="cursor-pointer"><input type="checkbox" value="MON" class="day-check-add hidden peer"><span class="block py-1.5 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">월</span></label>
+              <label class="cursor-pointer"><input type="checkbox" value="TUE" class="day-check-add hidden peer"><span class="block py-1.5 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">화</span></label>
+              <label class="cursor-pointer"><input type="checkbox" value="WED" class="day-check-add hidden peer"><span class="block py-1.5 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">수</span></label>
+              <label class="cursor-pointer"><input type="checkbox" value="THU" class="day-check-add hidden peer"><span class="block py-1.5 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">목</span></label>
+              <label class="cursor-pointer"><input type="checkbox" value="FRI" class="day-check-add hidden peer"><span class="block py-1.5 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">금</span></label>
+              <label class="cursor-pointer"><input type="checkbox" value="SAT" class="day-check-add hidden peer"><span class="block py-1.5 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">토</span></label>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-emerald-800">유튜브 영상 목록</span>
+              <button type="button" onclick="addYoutubeField('add-yt-list')" class="text-xs text-emerald-600 font-bold underline">+ 영상 추가</button>
+            </div>
+            <div id="add-yt-list" class="space-y-1.5">
+              <input type="url" class="add-yt-input w-full px-3 py-1.5 border border-emerald-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400" placeholder="유튜브 영상 주소 (선택)">
+            </div>
+          </div>
+
+          <div class="text-right pt-1">
+            <button type="submit" class="bg-emerald-600 text-white font-bold px-4 py-1.5 rounded-xl text-xs hover:bg-emerald-700 transition shadow-sm">
+              루틴 저장
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div id="routine-sections-container" class="space-y-2.5"></div>
+    </section>
+
+    <!-- 3️⃣ 기록 캘린더 & 분석 -->
+    <section class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-emerald-100 space-y-3 relative overflow-hidden">
+      <div class="flex justify-between items-center border-b border-emerald-50 pb-2">
+        <h2 class="text-sm font-bold text-emerald-900">📅 월별 기록 캘린더 & 분석</h2>
+        <button onclick="selectDate(getKSTToday())" class="text-xs text-emerald-600 font-bold underline">오늘 날짜로</button>
+      </div>
+
+      <div class="flex justify-between items-center px-1 text-sm font-bold text-slate-700">
+        <button onclick="changeMonth(-1)" class="px-2 py-1 hover:text-emerald-600 bg-emerald-50 rounded-lg">◀ 이전달</button>
+        <span id="cal-month-title" class="text-base font-extrabold text-emerald-800"></span>
+        <button onclick="changeMonth(1)" class="px-2 py-1 hover:text-emerald-600 bg-emerald-50 rounded-lg">다음달 ▶</button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-center border-collapse">
+          <thead>
+            <tr class="text-xs font-bold text-slate-400 border-b border-emerald-100 bg-emerald-50/50">
+              <th class="py-2 text-red-400 w-[12%]">일</th>
+              <th class="py-2 w-[12%]">월</th>
+              <th class="py-2 w-[12%]">화</th>
+              <th class="py-2 w-[12%]">수</th>
+              <th class="py-2 w-[12%]">목</th>
+              <th class="py-2 w-[12%]">금</th>
+              <th class="py-2 text-blue-400 w-[12%]">토</th>
+              <th class="py-2 text-emerald-700 bg-emerald-100/50 w-[16%]">주별 진행률</th>
+            </tr>
+          </thead>
+          <tbody id="cal-table-body" class="text-sm"></tbody>
+        </table>
+      </div>
+
+      <div onclick="toggleMonthDetail()" class="bg-emerald-50 hover:bg-emerald-100/80 cursor-pointer transition p-3 rounded-xl border border-emerald-200 flex justify-between items-center text-xs shadow-sm">
+        <div>
+          <span class="text-slate-500 font-medium">이달의 누적 달성:</span>
+          <span id="month-total-done" class="font-bold text-emerald-800 ml-1 text-sm">0개</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-emerald-800 font-bold">월별 루틴 상세 📊</span>
+          <span id="month-avg-rate" class="font-extrabold text-white bg-emerald-600 px-2.5 py-1 rounded-md text-xs">0%</span>
+        </div>
+      </div>
+
+      <div id="month-detail-card" class="hidden bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 space-y-2">
+        <div class="flex justify-between items-center border-b border-emerald-100 pb-1.5">
+          <h3 id="month-detail-title" class="font-bold text-xs text-emerald-900">📊 월간 루틴 달성률</h3>
+          <button onclick="toggleMonthDetail()" class="text-xs text-slate-400 hover:text-slate-600 font-bold">닫기 ✕</button>
+        </div>
+        <div id="month-routine-list" class="space-y-1.5"></div>
+      </div>
+    </section>
+
+    <!-- 4️⃣ 데이터 백업 & 복구 -->
+    <section class="bg-white/80 rounded-2xl p-3 shadow-sm border border-emerald-100 flex justify-between items-center text-xs">
+      <span class="font-bold text-slate-500">💾 데이터 관리</span>
+      <div class="flex gap-2">
+        <button onclick="exportData()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-3 py-1 rounded-lg transition">백업 다운로드</button>
+        <button onclick="document.getElementById('import-file').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1 rounded-lg transition">복구 불러오기</button>
+        <input type="file" id="import-file" onchange="importData(event)" class="hidden" accept=".json">
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const allDaysArray = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+    const defaultRoutines = [
+      { id: 1, icon: '🎧', title: '오디오북 (출근길)', time: '07:30', days: allDaysArray, weeklyFreq: 0 },
+      { id: 2, icon: '🚌', title: '출근', time: '08:00', days: ['MON','TUE','WED','THU','FRI'], weeklyFreq: 0 },
+      { id: 3, icon: '🥚', title: '달걀&아몬드브리즈', time: '08:30', days: allDaysArray, weeklyFreq: 0 },
+      { id: 4, icon: '📖', title: '독서 (오전)', time: '10:30', days: allDaysArray, weeklyFreq: 0 },
+      { id: 5, icon: '📖', title: '독서 (점심)', time: '12:50', days: allDaysArray, weeklyFreq: 0 },
+      { id: 6, icon: '📖', title: '독서 (오후)', time: '15:30', days: allDaysArray, weeklyFreq: 0 },
+      { id: 7, icon: '🥜', title: '하루견과/간식', time: '16:30', days: allDaysArray, weeklyFreq: 0 },
+      { id: 8, icon: '🏃‍♀️', title: '홈트레이닝 (상체&전신)', time: '18:00', days: ['MON','WED','FRI'], weeklyFreq: 0, youtubes: ['https://www.youtube.com/watch?v=gMaB-lF4u4g'] },
+      { id: 9, icon: '🏃‍♀️', title: '홈트레이닝 (하체&코어)', time: '18:00', days: ['TUE','THU'], weeklyFreq: 0, youtubes: ['https://www.youtube.com/watch?v=swRNeYw1Jyo'] },
+      { id: 10, icon: '🎬', title: '콘텐츠 만들기', time: '18:50', days: allDaysArray, weeklyFreq: 0 }
+    ];
+
+    function getKSTToday() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    let todayKey = getKSTToday();
+    let selectedDateKey = todayKey;
+    let calYearMonth = new Date();
+    let editingId = null;
+    let expandedWeekNum = null;
+    let isMonthExpanded = false;
+    let isPastUnlocked = false;
+
+    let targetWaterGoal = JSON.parse(localStorage.getItem('my_water_goal_v25')) || 2000;
+    let routines = JSON.parse(localStorage.getItem('my_routines_v25')) || defaultRoutines;
+    let records = JSON.parse(localStorage.getItem('my_routine_records_v25')) || {}; 
+    let waterLog = JSON.parse(localStorage.getItem('my_water_log_v25')) || {};
+    let memoLog = JSON.parse(localStorage.getItem('my_routine_memos_v25')) || {};
+
+    function checkAndApplyDateChange() {
+      const currentKST = getKSTToday();
+      if (currentKST !== todayKey) {
+        todayKey = currentKST;
+        selectedDateKey = todayKey;
+        calYearMonth = new Date();
+        isPastUnlocked = false;
+        if (!records[todayKey]) records[todayKey] = [];
+        if (!waterLog[todayKey]) waterLog[todayKey] = 0;
+        saveAndRender();
+      }
+    }
+
+    setInterval(checkAndApplyDateChange, 3000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        checkAndApplyDateChange();
+        render();
+      }
+    });
+
+    if (!records[todayKey]) records[todayKey] = [];
+    if (!waterLog[todayKey]) waterLog[todayKey] = 0;
+
+    function getYoutubeEmbedUrl(url) {
+      if (!url) return null;
+      let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      let match = url.match(regExp);
+      return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+    }
+
+    function formatTo12Hour(timeStr) {
+      if (!timeStr) return '';
+      let [hours, minutes] = timeStr.split(':').map(Number);
+      const period = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const strHours = String(hours).padStart(2, '0');
+      return `${period} ${strHours}:${String(minutes).padStart(2, '0')}`;
+    }
+
+    function toggleAddForm() {
+      const el = document.getElementById('new-routine-box');
+      if (el) el.classList.toggle('hidden');
+    }
+
+    function changeWaterGoal() {
+      const newGoal = prompt("목표 수분 섭취량을 입력하세요 (mL 단위):", targetWaterGoal);
+      if (newGoal && !isNaN(newGoal) && Number(newGoal) > 0) {
+        targetWaterGoal = Number(newGoal);
+        saveAndRender();
+      }
+    }
+
+    function addWater(amount) {
+      if (selectedDateKey !== todayKey && !isPastUnlocked) return;
+      waterLog[selectedDateKey] = (waterLog[selectedDateKey] || 0) + amount;
+      saveAndRender();
+    }
+    function resetWater() {
+      if (selectedDateKey !== todayKey && !isPastUnlocked) return;
+      waterLog[selectedDateKey] = 0;
+      saveAndRender();
+    }
+
+    function triggerConfetti() {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.8 }
+      });
+    }
+
+    function toggleComplete(id) {
+      if (selectedDateKey !== todayKey && !isPastUnlocked) return;
+      if (!records[selectedDateKey]) records[selectedDateKey] = [];
+      const idx = records[selectedDateKey].indexOf(id);
+      
+      if (idx > -1) {
+        records[selectedDateKey].splice(idx, 1);
+      } else {
+        records[selectedDateKey].push(id);
+        triggerConfetti();
+      }
+      saveAndRender();
+    }
+
+    function moveRoutineOrder(id, direction) {
+      const index = routines.findIndex(r => r.id === id);
+      if (index === -1) return;
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= routines.length) return;
+
+      const temp = routines[index];
+      routines[index] = routines[targetIndex];
+      routines[targetIndex] = temp;
+      saveAndRender();
+    }
+
+    function toggleMemoBox(id) {
+      const el = document.getElementById(`memo-box-${id}`);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    function saveMemo(id) {
+      const text = document.getElementById(`memo-input-${id}`).value.trim();
+      const key = `${selectedDateKey}_${id}`;
+      if (text) {
+        memoLog[key] = text;
+      } else {
+        delete memoLog[key];
+      }
+      saveAndRender();
+    }
+
+    function togglePastUnlock() {
+      isPastUnlocked = !isPastUnlocked;
+      render();
+    }
+
+    function deleteRoutine(e, id) {
+      e.stopPropagation();
+      routines = routines.filter(r => r.id !== id);
+      editingId = null;
+      saveAndRender();
+    }
+
+    function editRoutine(e, id) {
+      e.stopPropagation();
+      editingId = id;
+      render();
+    }
+
+    function cancelEdit() {
+      editingId = null;
+      render();
+    }
+
+    function handleFreqChange(type, id = null) {
+      const selectEl = type === 'add' ? document.getElementById('weekly-freq-add') : document.getElementById(`edit-weekly-freq-${id}`);
+      const checkboxes = type === 'add' ? document.querySelectorAll('.day-check-add') : document.querySelectorAll(`.edit-day-${id}`);
+      
+      if (selectEl.value !== 'FIXED') {
+        checkboxes.forEach(cb => { cb.checked = true; });
+      }
+    }
+
+    function addYoutubeField(containerId, value = '') {
+      const container = document.getElementById(containerId);
+      const div = document.createElement('div');
+      div.className = "flex gap-1.5 items-center";
+      div.innerHTML = `
+        <input type="url" value="${value}" placeholder="유튜브 영상 주소" class="yt-input-item flex-1 px-3 py-1.5 border border-emerald-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400">
+        <button type="button" onclick="this.parentElement.remove()" class="text-xs text-red-400 hover:text-red-600 px-1 font-bold">✕</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function saveEdit(id) {
+      const icon = document.getElementById(`edit-icon-${id}`).value || '📌';
+      const title = document.getElementById(`edit-title-${id}`).value;
+      const time = document.getElementById(`edit-time-${id}`).value;
+      const freqVal = document.getElementById(`edit-weekly-freq-${id}`).value;
+      const weeklyFreq = freqVal === 'FIXED' ? 0 : parseInt(freqVal);
+
+      let checkedDays = Array.from(document.querySelectorAll(`.edit-day-${id}:checked`)).map(cb => cb.value);
+      if (checkedDays.length === 0 || weeklyFreq > 0) checkedDays = [...allDaysArray];
+
+      const ytInputs = document.querySelectorAll(`#edit-yt-list-${id} .yt-input-item`);
+      const youtubes = Array.from(ytInputs).map(inp => inp.value.trim()).filter(v => v !== '');
+
+      if (!title) {
+        alert('루틴 이름을 입력해주세요!');
+        return;
+      }
+
+      routines = routines.map(r => r.id === id ? { ...r, icon, title, time, days: checkedDays, weeklyFreq, youtubes } : r);
+      editingId = null;
+      saveAndRender();
+    }
+
+    function selectAllDays(type, id = null) {
+      const selector = type === 'add' ? '.day-check-add' : `.edit-day-${id}`;
+      const checkboxes = document.querySelectorAll(selector);
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      checkboxes.forEach(cb => cb.checked = !allChecked);
+    }
+
+    document.getElementById('routine-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const freqVal = document.getElementById('weekly-freq-add').value;
+      const weeklyFreq = freqVal === 'FIXED' ? 0 : parseInt(freqVal);
+
+      let checkedDays = Array.from(document.querySelectorAll('.day-check-add:checked')).map(cb => cb.value);
+      if (checkedDays.length === 0 || weeklyFreq > 0) checkedDays = [...allDaysArray];
+
+      const ytInputs = document.querySelectorAll('#add-yt-list .add-yt-input, #add-yt-list .yt-input-item');
+      const youtubes = Array.from(ytInputs).map(inp => inp.value.trim()).filter(v => v !== '');
+
+      const newR = {
+        id: Date.now(),
+        icon: document.getElementById('icon').value || '📌',
+        title: document.getElementById('title').value,
+        time: document.getElementById('time').value,
+        days: checkedDays,
+        weeklyFreq: weeklyFreq,
+        youtubes: youtubes
+      };
+
+      routines.push(newR);
+      saveAndRender();
+      e.target.reset();
+      document.querySelectorAll('.day-check-add').forEach(cb => cb.checked = false);
+      document.getElementById('add-yt-list').innerHTML = `<input type="url" class="add-yt-input w-full px-3 py-1.5 border border-emerald-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400" placeholder="유튜브 영상 주소 (선택)">`;
+      document.getElementById('icon').value = '📌';
+      toggleAddForm();
+    });
+
+    function exportData() {
+      const data = { routines, records, waterLog, memoLog, targetWaterGoal };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `yura_routine_backup_${getKSTToday()}.json`;
+      a.click();
+    }
+
+    function importData(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (parsed.routines) routines = parsed.routines;
+          if (parsed.records) records = parsed.records;
+          if (parsed.waterLog) waterLog = parsed.waterLog;
+          if (parsed.memoLog) memoLog = parsed.memoLog;
+          if (parsed.targetWaterGoal) targetWaterGoal = parsed.targetWaterGoal;
+          saveAndRender();
+          alert('데이터가 성공적으로 복구되었습니다! 🌸');
+        } catch (err) {
+          alert('올바른 백업 파일이 아닙니다.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function changeMonth(offset) {
+      calYearMonth.setMonth(calYearMonth.getMonth() + offset);
+      expandedWeekNum = null;
+      renderCalendarTable();
+    }
+
+    function selectDate(dateStr) {
+      selectedDateKey = dateStr;
+      isPastUnlocked = false;
+      render();
+    }
+
+    function toggleWeekDetail(weekNum) {
+      expandedWeekNum = (expandedWeekNum === weekNum) ? null : weekNum;
+      renderCalendarTable();
+    }
+
+    function toggleMonthDetail() {
+      isMonthExpanded = !isMonthExpanded;
+      const monthCard = document.getElementById('month-detail-card');
+      if (isMonthExpanded) {
+        monthCard.classList.remove('hidden');
+        renderMonthRoutineList();
+      } else {
+        monthCard.classList.add('hidden');
+      }
+    }
+
+    function generateCompactRoutineStatsHtml(dateList) {
+      let html = '<div class="space-y-1.5 w-full">';
+      routines.forEach(r => {
+        let totalPlanned = 0;
+        let doneCount = 0;
+
+        if (r.weeklyFreq && r.weeklyFreq > 0) {
+          totalPlanned = Math.round((dateList.length / 7) * r.weeklyFreq);
+          if (totalPlanned === 0) totalPlanned = r.weeklyFreq;
+
+          dateList.forEach(dStr => {
+            if ((records[dStr] || []).includes(r.id)) doneCount++;
+          });
+        } else {
+          dateList.forEach(dStr => {
+            const parts = dStr.split('-');
+            const dObj = new Date(parts[0], parts[1] - 1, parts[2]);
+            const dayName = allDaysArray[dObj.getDay()];
+
+            if (!r.days || r.days.includes(dayName)) {
+              totalPlanned++;
+              if ((records[dStr] || []).includes(r.id)) doneCount++;
+            }
+          });
+        }
+
+        if (totalPlanned === 0) return;
+
+        const rate = Math.min(Math.round((doneCount / totalPlanned) * 100), 100);
+
+        html += `
+          <div class="bg-white/90 px-3 py-2 rounded-lg border border-emerald-100 flex items-center justify-between shadow-2xs">
+            <div class="flex items-center gap-2 overflow-hidden flex-1 mr-2">
+              <span class="text-sm flex-shrink-0">${r.icon}</span>
+              <span class="font-bold text-xs text-slate-800 truncate">${r.title} ${r.weeklyFreq > 0 ? `<span class="text-[10px] text-emerald-600 font-semibold">(주 ${r.weeklyFreq}회)</span>` : ''}</span>
+            </div>
+            
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <div class="relative w-6 h-6 flex items-center justify-center">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                  <path class="text-emerald-100" stroke-width="6" stroke="currentColor" fill="none"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="text-emerald-600" stroke-width="6" stroke-dasharray="${rate}, 100" stroke-linecap="round" stroke="currentColor" fill="none"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+              </div>
+              <span class="text-xs font-extrabold text-emerald-700 w-9 text-right">${rate}%</span>
+              <span class="text-xs text-slate-500 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100 font-bold">${doneCount} / ${totalPlanned}회</span>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function renderMonthRoutineList() {
+      const year = calYearMonth.getFullYear();
+      const month = calYearMonth.getMonth() + 1;
+      const lastDate = new Date(year, month, 0).getDate();
+
+      let monthDates = [];
+      for (let d = 1; d <= lastDate; d++) {
+        monthDates.push(`${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
+      }
+
+      document.getElementById('month-detail-title').innerText = `📊 ${month}월 세부 루틴 달성 현황`;
+      document.getElementById('month-routine-list').innerHTML = generateCompactRoutineStatsHtml(monthDates);
+    }
+
+    function renderCalendarTable() {
+      const year = calYearMonth.getFullYear();
+      const month = calYearMonth.getMonth();
+      document.getElementById('cal-month-title').innerText = `${year}년 ${month + 1}월`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      const tbody = document.getElementById('cal-table-body');
+      tbody.innerHTML = '';
+
+      let dayCounter = 1;
+      let monthTotalDone = 0;
+      let monthTotalPlanned = 0;
+
+      for (let week = 0; week < 6; week++) {
+        if (dayCounter > lastDate) break;
+
+        const currentWeekNum = week + 1;
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-emerald-50 hover:bg-emerald-50/30 transition";
+
+        let weekDoneCount = 0;
+        let weekPlannedCount = 0;
+        let weekDates = [];
+
+        for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+          const td = document.createElement('td');
+          td.className = "py-2 px-0.5 align-middle";
+
+          if ((week === 0 && dayOfWeek < firstDay) || dayCounter > lastDate) {
+            td.innerHTML = `<span class="text-slate-200 text-xs">-</span>`;
+          } else {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
+            weekDates.push(dateStr);
+
+            const isSelected = dateStr === selectedDateKey;
+            const isToday = dateStr === todayKey;
+
+            const dayName = allDaysArray[dayOfWeek];
+            const plannedForDay = routines.filter(r => !r.days || r.days.includes(dayName)).length;
+            const doneForDay = (records[dateStr] || []).length;
+
+            weekPlannedCount += plannedForDay;
+            weekDoneCount += doneForDay;
+
+            monthTotalPlanned += plannedForDay;
+            monthTotalDone += doneForDay;
+
+            const hasRecord = doneForDay > 0;
+
+            const btn = document.createElement('button');
+            btn.onclick = () => selectDate(dateStr);
+            btn.className = `w-full py-1.5 rounded-lg flex flex-col items-center justify-center transition ${
+              isSelected ? 'bg-emerald-600 text-white font-bold shadow-sm' :
+              isToday ? 'bg-emerald-100 text-emerald-800 font-bold border border-emerald-300' :
+              'hover:bg-emerald-100/50 text-slate-700 font-semibold'
+            }`;
+
+            btn.innerHTML = `
+              <span class="text-xs">${dayCounter}</span>
+              <span class="text-[9px] h-2.5 leading-none mt-0.5">${hasRecord ? '🐾' : ''}</span>
+            `;
+
+            td.appendChild(btn);
+            dayCounter++;
+          }
+          tr.appendChild(td);
+        }
+
+        const weekRate = weekPlannedCount > 0 ? Math.round((weekDoneCount / weekPlannedCount) * 100) : 0;
+        const rateTd = document.createElement('td');
+        rateTd.className = "py-2 px-1 bg-emerald-50/50 border-l border-emerald-100 align-middle";
+
+        const isWeekExpanded = (expandedWeekNum === currentWeekNum);
+        const weekBtn = document.createElement('button');
+        weekBtn.onclick = () => toggleWeekDetail(currentWeekNum);
+        weekBtn.className = `w-full py-1.5 rounded-md text-xs font-bold transition flex items-center justify-center gap-0.5 ${
+          isWeekExpanded ? 'bg-emerald-700 text-white' : 'bg-emerald-100/70 hover:bg-emerald-200 text-emerald-800'
+        }`;
+        weekBtn.innerHTML = `<span>${weekRate}%</span> <span class="text-[9px]">${isWeekExpanded ? '▲' : '▼'}</span>`;
+
+        rateTd.appendChild(weekBtn);
+        tr.appendChild(rateTd);
+        tbody.appendChild(tr);
+
+        if (isWeekExpanded) {
+          const detailTr = document.createElement('tr');
+          detailTr.className = "bg-emerald-50/60 border-b border-emerald-100";
+          
+          const detailTd = document.createElement('td');
+          detailTd.colSpan = 8;
+          detailTd.className = "p-2.5 text-left";
+
+          detailTd.innerHTML = `
+            <div class="space-y-2">
+              <div class="flex justify-between items-center px-0.5 mb-1">
+                <span class="font-bold text-xs text-emerald-900">📌 ${month + 1}월 ${currentWeekNum}주차 세부 루틴 달성률</span>
+                <button onclick="toggleWeekDetail(${currentWeekNum})" class="text-xs text-slate-400 hover:text-slate-600 font-bold">닫기 ✕</button>
+              </div>
+              ${generateCompactRoutineStatsHtml(weekDates)}
+            </div>
+          `;
+
+          detailTr.appendChild(detailTd);
+          tbody.appendChild(detailTr);
+        }
+      }
+
+      const monthAvgRate = monthTotalPlanned > 0 ? Math.round((monthTotalDone / monthTotalPlanned) * 100) : 0;
+      document.getElementById('month-total-done').innerText = `${monthTotalDone}개`;
+      document.getElementById('month-avg-rate').innerText = `${monthAvgRate}%`;
+
+      if (isMonthExpanded) {
+        renderMonthRoutineList();
+      }
+    }
+
+    function saveAndRender() {
+      localStorage.setItem('my_water_goal_v25', JSON.stringify(targetWaterGoal));
+      localStorage.setItem('my_routines_v25', JSON.stringify(routines));
+      localStorage.setItem('my_routine_records_v25', JSON.stringify(records));
+      localStorage.setItem('my_water_log_v25', JSON.stringify(waterLog));
+      localStorage.setItem('my_routine_memos_v25', JSON.stringify(memoLog));
+      render();
+    }
+
+    function createRoutineCardHtml(r, isDone, canEdit, isTodayView, currentMemo, ytList) {
+      let youtubeHtml = '';
+      if (ytList.length > 0) {
+        youtubeHtml = `
+          <details class="mt-2 group/yt">
+            <summary class="text-xs font-bold text-emerald-700 hover:text-emerald-800 cursor-pointer list-none flex items-center justify-between bg-emerald-50/70 px-2.5 py-1 rounded-lg border border-emerald-100">
+              <span class="flex items-center gap-1">▶ 운동 영상 보기 (${ytList.length}개)</span>
+              <span class="group-open/yt:rotate-180 transition-transform text-[10px]">▼</span>
+            </summary>
+            <div class="mt-2 space-y-2 pt-1">
+              ${ytList.map(url => `
+                <div class="rounded-lg overflow-hidden border border-emerald-100 aspect-video w-full shadow-sm">
+                  <iframe class="w-full h-full" src="${url}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+              `).join('')}
+            </div>
+          </details>
+        `;
+      }
+
+      let memoBtnHtml = '';
+      if (currentMemo) {
+        memoBtnHtml = `
+          <button onclick="toggleMemoBox(${r.id})" class="text-xs px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-200 flex items-center gap-0.5 flex-shrink-0" title="작성된 메모 보기">
+            <span>📝</span> <span class="text-[10px]">보기</span>
+          </button>
+        `;
+      } else if (canEdit) {
+        memoBtnHtml = `
+          <button onclick="toggleMemoBox(${r.id})" class="text-xs p-0.5 rounded text-slate-400 hover:text-emerald-600 flex-shrink-0" title="메모 남기기">
+            📝
+          </button>
+        `;
+      }
+
+      return `
+        <div class="p-3 rounded-xl border transition-all ${isDone ? 'bg-emerald-50/50 border-emerald-100 opacity-70' : 'bg-white border-emerald-100 shadow-sm'}">
+          <div class="flex items-center justify-between gap-1.5 w-full">
+            <div class="flex items-center gap-1.5 cursor-pointer flex-1 min-w-0" onclick="${canEdit ? `toggleComplete(${r.id})` : ''}">
+              <input type="checkbox" ${isDone ? 'checked' : ''} ${!canEdit ? 'disabled' : ''}
+                     class="w-4 h-4 accent-emerald-600 rounded cursor-pointer pointer-events-none flex-shrink-0">
+              
+              <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 flex-shrink-0 whitespace-nowrap">${formatTo12Hour(r.time)}</span>
+              
+              <p class="font-bold text-sm text-slate-800 truncate flex-1 min-w-0 ${isDone ? 'line-through text-slate-400' : ''}">
+                <span>${r.icon}</span> ${r.title} ${r.weeklyFreq > 0 ? `<span class="text-xs text-emerald-600 font-semibold">(주 ${r.weeklyFreq}회)</span>` : ''}
+              </p>
+            </div>
+            
+            <div class="flex items-center gap-1 flex-shrink-0">
+              ${memoBtnHtml}
+              
+              ${isTodayView ? `
+                <button onclick="editRoutine(event, ${r.id})" class="text-xs text-slate-400 hover:text-emerald-600 p-0.5" title="루틴 수정">✏️</button>
+                
+                <div class="flex flex-col">
+                  <button onclick="moveRoutineOrder(${r.id}, -1)" class="text-[9px] text-slate-400 hover:text-emerald-600 leading-none p-0.5">▲</button>
+                  <button onclick="moveRoutineOrder(${r.id}, 1)" class="text-[9px] text-slate-400 hover:text-emerald-600 leading-none p-0.5">▼</button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <div id="memo-box-${r.id}" class="hidden mt-2 pt-2 border-t border-emerald-50">
+            <div class="flex gap-1.5">
+              <input type="text" id="memo-input-${r.id}" value="${currentMemo}" placeholder="오늘의 기록이나 메모를 남겨보세요! (예: 독서 범위, 주제 등)" ${!canEdit ? 'disabled' : ''}
+                     class="flex-1 px-2.5 py-1 border border-emerald-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400 bg-emerald-50/30 min-w-0">
+              ${canEdit ? `<button onclick="saveMemo(${r.id})" class="bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-lg text-xs hover:bg-emerald-700 transition flex-shrink-0">저장</button>` : ''}
+            </div>
+          </div>
+
+          ${youtubeHtml}
+        </div>
+      `;
+    }
+
+    function render() {
+      checkAndApplyDateChange();
+
+      const isTodayView = (selectedDateKey === todayKey);
+      const canEdit = isTodayView || isPastUnlocked;
+      
+      const dateParts = selectedDateKey.split('-');
+      const viewDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+      document.getElementById('current-date').innerText = viewDateObj.toLocaleDateString('ko-KR', {
+        year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+      });
+
+      const viewingTag = document.getElementById('viewing-tag');
+      const unlockBtn = document.getElementById('unlock-btn');
+      const waterBtns = document.getElementById('water-btns');
+
+      if (isTodayView) {
+        viewingTag.innerText = "오늘";
+        viewingTag.className = "text-xs bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full";
+        unlockBtn.classList.add('hidden');
+        waterBtns.classList.remove('opacity-40', 'pointer-events-none');
+        document.getElementById('checklist-title').innerText = "🐾 오늘의 체크리스트";
+      } else {
+        viewingTag.innerText = `${selectedDateKey}`;
+        viewingTag.className = "text-xs bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full";
+        unlockBtn.classList.remove('hidden');
+        
+        if (isPastUnlocked) {
+          unlockBtn.innerText = "🔓 잠금 해제됨 (수정가능)";
+          unlockBtn.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500 text-white shadow-2xs";
+          waterBtns.classList.remove('opacity-40', 'pointer-events-none');
+        } else {
+          unlockBtn.innerText = "🔒 수정 잠금 (보기전용)";
+          unlockBtn.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200";
+          waterBtns.classList.add('opacity-40', 'pointer-events-none');
+        }
+
+        document.getElementById('checklist-title').innerText = `🐾 ${selectedDateKey} 기록`;
+      }
+
+      const waterAmount = waterLog[selectedDateKey] || 0;
+      document.getElementById('water-total').innerText = `${waterAmount} / ${targetWaterGoal} mL`;
+      document.getElementById('water-bar').style.width = `${Math.min((waterAmount / targetWaterGoal) * 100, 100)}%`;
+
+      renderCalendarTable();
+
+      const daysStr = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+      const selDayStr = daysStr[viewDateObj.getDay()];
+
+      const filteredRoutines = routines.filter(r => {
+        if (r.weeklyFreq && r.weeklyFreq > 0) return true;
+        if (!r.days || r.days.length === 0) return true;
+        return r.days.includes(selDayStr);
+      });
+
+      const todayDone = (records[todayKey] || []).length;
+      const todayRate = filteredRoutines.length > 0 ? Math.round((todayDone / filteredRoutines.length) * 100) : 0;
+      document.getElementById('today-completion-rate').innerText = `${todayRate}%`;
+
+      const morningRoutines = [];
+      const afternoonRoutines = [];
+      const eveningRoutines = [];
+
+      filteredRoutines.forEach(r => {
+        const hour = parseInt(r.time.split(':')[0], 10);
+        if (hour < 12) morningRoutines.push(r);
+        else if (hour < 18) afternoonRoutines.push(r);
+        else eveningRoutines.push(r);
+      });
+
+      const containerEl = document.getElementById('routine-sections-container');
+      containerEl.innerHTML = '';
+
+      const sections = [
+        { id: 'sec-morning', title: '🌅 아침 & 오전 (~12:00)', list: morningRoutines },
+        { id: 'sec-afternoon', title: '☀️ 점심 & 오후 (12:00~18:00)', list: afternoonRoutines },
+        { id: 'sec-evening', title: '🌙 저녁 & 밤 (18:00~)', list: eveningRoutines }
+      ];
+
+      sections.forEach(sec => {
+        if (sec.list.length === 0) return;
+
+        const details = document.createElement('details');
+        details.open = true;
+        details.className = "bg-emerald-50/40 px-1.5 py-2 rounded-xl border border-emerald-100 group/sec";
+
+        let cardsHtml = '';
+        sec.list.forEach(r => {
+          const isDone = (records[selectedDateKey] || []).includes(r.id);
+          const memoKey = `${selectedDateKey}_${r.id}`;
+          const currentMemo = memoLog[memoKey] || '';
+          let ytList = r.youtubes || (r.youtube ? [r.youtube] : []);
+          ytList = ytList.map(url => getYoutubeEmbedUrl(url)).filter(Boolean);
+
+          if (editingId === r.id) {
+            const dayList = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            let currentYts = r.youtubes || (r.youtube ? [r.youtube] : []);
+
+            cardsHtml += `
+              <div class="p-3 rounded-xl border bg-white border-emerald-100 shadow-sm space-y-2.5 text-xs w-full box-border">
+                <div class="flex gap-1.5 w-full">
+                  <input type="text" id="edit-icon-${r.id}" value="${r.icon}" class="w-10 px-1.5 py-1 border border-emerald-200 rounded-lg text-center text-sm flex-shrink-0">
+                  <input type="text" id="edit-title-${r.id}" value="${r.title}" class="flex-1 px-2 py-1 border border-emerald-200 rounded-lg text-sm w-full min-w-0">
+                </div>
+                <div class="flex items-center gap-1.5 w-full">
+                  <span class="font-bold text-emerald-800 text-xs flex-shrink-0">시간</span>
+                  <input type="time" id="edit-time-${r.id}" value="${r.time}" class="flex-1 px-2 py-1 border border-emerald-200 rounded-lg text-sm w-full min-w-0">
+                </div>
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-emerald-800 text-xs">반복 방식</span>
+                    <button type="button" onclick="selectAllDays('edit', ${r.id})" class="text-xs text-emerald-600 font-bold underline">매일 선택</button>
+                  </div>
+                  <div class="mb-2">
+                    <select id="edit-weekly-freq-${r.id}" onchange="handleFreqChange('edit', ${r.id})" class="w-full px-2 py-1 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-800">
+                      <option value="FIXED" ${!r.weeklyFreq || r.weeklyFreq === 0 ? 'selected' : ''}>지정한 요일에 수행 (기본)</option>
+                      <option value="1" ${r.weeklyFreq === 1 ? 'selected' : ''}>주 1회 (요일 상관없이 랜덤)</option>
+                      <option value="2" ${r.weeklyFreq === 2 ? 'selected' : ''}>주 2회 (요일 상관없이 랜덤)</option>
+                      <option value="3" ${r.weeklyFreq === 3 ? 'selected' : ''}>주 3회 (요일 상관없이 랜덤)</option>
+                      <option value="4" ${r.weeklyFreq === 4 ? 'selected' : ''}>주 4회 (요일 상관없이 랜덤)</option>
+                      <option value="5" ${r.weeklyFreq === 5 ? 'selected' : ''}>주 5회 (요일 상관없이 랜덤)</option>
+                      <option value="6" ${r.weeklyFreq === 6 ? 'selected' : ''}>주 6회 (요일 상관없이 랜덤)</option>
+                    </select>
+                  </div>
+                  <div class="grid grid-cols-7 gap-1 text-center">
+                    ${dayList.map((d, i) => `
+                      <label class="cursor-pointer">
+                        <input type="checkbox" value="${d}" ${r.days && r.days.includes(d) ? 'checked' : ''} class="edit-day-${r.id} hidden peer">
+                        <span class="block py-1 rounded-lg border border-emerald-200 text-xs text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:font-bold">${dayNames[i]}</span>
+                      </label>
+                    `).join('')}
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-emerald-800 text-xs">유튜브 영상 목록</span>
+                    <button type="button" onclick="addYoutubeField('edit-yt-list-${r.id}')" class="text-xs text-emerald-600 font-bold underline">+ 영상 추가</button>
+                  </div>
+                  <div id="edit-yt-list-${r.id}" class="space-y-1.5 w-full">
+                    ${currentYts.length > 0 ? currentYts.map(y => `
+                      <div class="flex gap-1.5 items-center w-full">
+                        <input type="url" value="${y}" class="yt-input-item flex-1 px-2 py-1 border border-emerald-200 rounded-lg text-xs w-full min-w-0">
+                        <button type="button" onclick="this.parentElement.remove()" class="text-xs text-red-400 hover:text-red-600 px-1 font-bold">✕</button>
+                      </div>
+                    `).join('') : `
+                      <div class="flex gap-1.5 items-center w-full">
+                        <input type="url" value="" placeholder="유튜브 주소" class="yt-input-item flex-1 px-2 py-1 border border-emerald-200 rounded-lg text-xs w-full min-w-0">
+                        <button type="button" onclick="this.parentElement.remove()" class="text-xs text-red-400 hover:text-red-600 px-1 font-bold">✕</button>
+                      </div>
+                    `}
+                  </div>
+                </div>
+                <div class="flex justify-between items-center pt-1 border-t border-emerald-50">
+                  <button onclick="deleteRoutine(event, ${r.id})" class="px-2 py-1 bg-red-50 text-red-500 rounded-lg font-bold hover:bg-red-100 transition text-xs">🗑️ 루틴 삭제</button>
+                  <div class="flex gap-1.5">
+                    <button onclick="cancelEdit()" class="px-2.5 py-1 bg-slate-100 text-slate-500 rounded-lg font-medium">취소</button>
+                    <button onclick="saveEdit(${r.id})" class="px-2.5 py-1 bg-emerald-600 text-white rounded-lg font-bold">저장</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else {
+            cardsHtml += createRoutineCardHtml(r, isDone, canEdit, isTodayView, currentMemo, ytList);
+          }
+        });
+
+        details.innerHTML = `
+          <summary class="font-bold text-xs text-emerald-800 cursor-pointer list-none flex justify-between items-center px-1 py-0.5">
+            <span>${sec.title} (${sec.list.length}개)</span>
+            <span class="group-open/sec:rotate-180 transition-transform text-[10px] text-slate-400">▼</span>
+          </summary>
+          <div class="mt-2 space-y-1.5">
+            ${cardsHtml}
+          </div>
+        `;
+
+        containerEl.appendChild(details);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
