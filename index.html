@@ -24,7 +24,7 @@
     <header class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-emerald-100 flex justify-between items-center">
       <div>
         <h1 class="text-xl font-bold text-emerald-700 flex items-center gap-1.5">
-          유라의 하루루틴❣️
+          유라 루틴❣️
         </h1>
         <p id="current-date" class="text-xs text-emerald-600/70 mt-0.5 font-medium"></p>
       </div>
@@ -104,13 +104,13 @@
 
             <div class="mb-2">
               <select id="weekly-freq-add" onchange="handleFreqChange('add')" class="w-full px-2.5 py-1.5 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-800 focus:outline-none">
-                <option value="FIXED">지정한 요일에 수행 (기본)</option>
-                <option value="1">주 1회 (요일 상관없이 랜덤)</option>
-                <option value="2">주 2회 (요일 상관없이 랜덤)</option>
-                <option value="3">주 3회 (요일 상관없이 랜덤)</option>
-                <option value="4">주 4회 (요일 상관없이 랜덤)</option>
-                <option value="5">주 5회 (요일 상관없이 랜덤)</option>
-                <option value="6">주 6회 (요일 상관없이 랜덤)</option>
+                <option value="FIXED">지정 요일 (기본)</option>
+                <option value="1">주 1회 (랜덤)</option>
+                <option value="2">주 2회 (랜덤)</option>
+                <option value="3">주 3회 (랜덤)</option>
+                <option value="4">주 4회 (랜덤)</option>
+                <option value="5">주 5회 (랜덤)</option>
+                <option value="6">주 6회 (랜덤)</option>
               </select>
             </div>
 
@@ -149,7 +149,7 @@
     <!-- 3️⃣ 기록 캘린더 & 분석 -->
     <section class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-emerald-100 space-y-3 relative overflow-hidden">
       <div class="flex justify-between items-center border-b border-emerald-50 pb-2">
-        <h2 class="text-sm font-bold text-emerald-900">📅 월별 기록 캘린더 & 분석</h2>
+        <h2 class="text-sm font-bold text-emerald-900">📅 월별기록 </h2>
         <button onclick="selectDate(getKSTToday())" class="text-xs text-emerald-600 font-bold underline">오늘 날짜로</button>
       </div>
 
@@ -215,13 +215,13 @@
     const defaultRoutines = [
       { id: 1, icon: '🎧', title: '오디오북 (출근길)', time: '07:30', days: allDaysArray, weeklyFreq: 0 },
       { id: 2, icon: '🚌', title: '출근', time: '08:00', days: ['MON','TUE','WED','THU','FRI'], weeklyFreq: 0 },
-      { id: 3, icon: '🥚', title: '달걀&아몬드브리즈', time: '08:30', days: allDaysArray, weeklyFreq: 0 },
+      { id: 3, icon: '🥚', title: '단백질', time: '08:30', days: allDaysArray, weeklyFreq: 0 },
       { id: 4, icon: '📖', title: '독서 (오전)', time: '10:30', days: allDaysArray, weeklyFreq: 0 },
       { id: 5, icon: '📖', title: '독서 (점심)', time: '12:50', days: allDaysArray, weeklyFreq: 0 },
       { id: 6, icon: '📖', title: '독서 (오후)', time: '15:30', days: allDaysArray, weeklyFreq: 0 },
       { id: 7, icon: '🥜', title: '하루견과/간식', time: '16:30', days: allDaysArray, weeklyFreq: 0 },
-      { id: 8, icon: '🏃‍♀️', title: '홈트레이닝 (상체&전신)', time: '18:00', days: ['MON','WED','FRI'], weeklyFreq: 0, youtubes: ['https://www.youtube.com/watch?v=gMaB-lF4u4g'] },
-      { id: 9, icon: '🏃‍♀️', title: '홈트레이닝 (하체&코어)', time: '18:00', days: ['TUE','THU'], weeklyFreq: 0, youtubes: ['https://www.youtube.com/watch?v=swRNeYw1Jyo'] },
+      { id: 8, icon: '🏃‍♀️', title: '홈트 (상체&전신)', time: '18:00', days: ['MON','WED','FRI'], weeklyFreq: 0, youtubes: ['https://www.youtube.com/watch?v=gMaB-lF4u4g'] },
+      { id: 9, icon: '🏃‍♀️', title: '홈트 (하체&코어)', time: '18:00', days: ['TUE','THU'], weeklyFreq: 0, youtubes: ['https://www.youtube.com/watch?v=swRNeYw1Jyo'] },
       { id: 10, icon: '🎬', title: '콘텐츠 만들기', time: '18:50', days: allDaysArray, weeklyFreq: 0 }
     ];
 
