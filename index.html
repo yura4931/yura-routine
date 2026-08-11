@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>유라 루틴❣️</title>
+  <title>유라루틴❣️</title>
 
-  <!-- 🐱 보내주신 턱시도 고양이 앱 아이콘 설정 (고화질 파비콘 반영) -->
-  <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='180' height='180'><rect width='100' height='100' rx='22' fill='%23ffffff'/><path d='M25 20 C18 35 15 55 20 70 C30 90 70 90 80 70 C85 55 82 35 75 20 L62 33 C58 31 54 30 50 30 C46 30 42 31 38 33 Z' fill='%23231f20'/><path d='M50 30 C52 45 61 58 80 70 C70 90 30 90 20 70 C39 58 48 45 50 30 Z' fill='%23ffffff'/><path d='M30 60 Q38 53 45 60' fill='none' stroke='%23231f20' stroke-width='4' stroke-linecap='round'/><path d='M55 60 Q62 53 70 60' fill='none' stroke='%23231f20' stroke-width='4' stroke-linecap='round'/><ellipse cx='50' cy='66' rx='4.5' ry='3.5' fill='%23231f20'/><path d='M50 68 L50 73 C45 77 41 73 41 73 M50 73 C55 77 59 73 59 73' fill='none' stroke='%23231f20' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23ffffff'/><path d='M25 20 C18 35 15 55 20 70 C30 90 70 90 80 70 C85 55 82 35 75 20 L62 33 C58 31 54 30 50 30 C46 30 42 31 38 33 Z' fill='%23231f20'/><path d='M50 30 C52 45 61 58 80 70 C70 90 30 90 20 70 C39 58 48 45 50 30 Z' fill='%23ffffff'/><path d='M30 60 Q38 53 45 60' fill='none' stroke='%23231f20' stroke-width='4' stroke-linecap='round'/><path d='M55 60 Q62 53 70 60' fill='none' stroke='%23231f20' stroke-width='4' stroke-linecap='round'/><ellipse cx='50' cy='66' rx='4.5' ry='3.5' fill='%23231f20'/><path d='M50 68 L50 73 C45 77 41 73 41 73 M50 73 C55 77 59 73 59 73' fill='none' stroke='%23231f20' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <!-- 🐱 깃허브에 올린 icon.png 파일을 홈 화면 아이콘으로 직접 연결 -->
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -36,7 +36,7 @@
     <!-- 🔥 연속 달성 응원 카드 -->
     <section class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-3.5 shadow-sm flex justify-between items-center">
       <div>
-        <p class="text-xs opacity-90 font-medium">오늘도 파이팅이에요! 🐾</p>
+        <p class="text-xs opacity-90 font-medium">오늘도 잘 보내보자</p>
         <p id="streak-text" class="text-base font-extrabold mt-0.5">🔥 연속 루틴 달성 중!</p>
       </div>
       <div class="text-right">
@@ -871,9 +871,9 @@
       containerEl.innerHTML = '';
 
       const sections = [
-        { id: 'sec-morning', title: '🌅 아침 & 오전 (~12:00)', list: morningRoutines },
-        { id: 'sec-afternoon', title: '☀️ 점심 & 오후 (12:00~18:00)', list: afternoonRoutines },
-        { id: 'sec-evening', title: '🌙 저녁 & 밤 (18:00~)', list: eveningRoutines }
+        { id: 'sec-morning', title: '🌅 오전 (~12:00)', list: morningRoutines },
+        { id: 'sec-afternoon', title: '☀️ 오후 (12:00~18:00)', list: afternoonRoutines },
+        { id: 'sec-evening', title: '🌙 저녁 (18:00~)', list: eveningRoutines }
       ];
 
       sections.forEach(sec => {
