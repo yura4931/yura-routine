@@ -854,13 +854,13 @@
             </div>
             <div class="mb-2">
               <select id="edit-weekly-freq-${r.id}" onchange="handleFreqChange('edit', ${r.id})" class="w-full px-2 py-1 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-800">
-                <option value="FIXED" ${!r.weeklyFreq || r.weeklyFreq === 0 ? 'selected' : ''}>지정한 요일에 수행 (기본)</option>
-                <option value="1" ${r.weeklyFreq === 1 ? 'selected' : ''}>주 1회 (요일 상관없이 랜덤)</option>
-                <option value="2" ${r.weeklyFreq === 2 ? 'selected' : ''}>주 2회 (요일 상관없이 랜덤)</option>
-                <option value="3" ${r.weeklyFreq === 3 ? 'selected' : ''}>주 3회 (요일 상관없이 랜덤)</option>
-                <option value="4" ${r.weeklyFreq === 4 ? 'selected' : ''}>주 4회 (요일 상관없이 랜덤)</option>
-                <option value="5" ${r.weeklyFreq === 5 ? 'selected' : ''}>주 5회 (요일 상관없이 랜덤)</option>
-                <option value="6" ${r.weeklyFreq === 6 ? 'selected' : ''}>주 6회 (요일 상관없이 랜덤)</option>
+                <option value="FIXED" ${!r.weeklyFreq || r.weeklyFreq === 0 ? 'selected' : ''}>요일 지정 (기본)</option>
+                <option value="1" ${r.weeklyFreq === 1 ? 'selected' : ''}>주 1회 (랜덤 )</option>
+                <option value="2" ${r.weeklyFreq === 2 ? 'selected' : ''}>주 2회 (랜덤)</option>
+                <option value="3" ${r.weeklyFreq === 3 ? 'selected' : ''}>주 3회 (랜덤)</option>
+                <option value="4" ${r.weeklyFreq === 4 ? 'selected' : ''}>주 4회 (랜덤)</option>
+                <option value="5" ${r.weeklyFreq === 5 ? 'selected' : ''}>주 5회 (랜덤)</option>
+                <option value="6" ${r.weeklyFreq === 6 ? 'selected' : ''}>주 6회 (랜덤)</option>
               </select>
             </div>
             <div class="grid grid-cols-7 gap-1 text-center">
